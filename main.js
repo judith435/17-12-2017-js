@@ -62,25 +62,37 @@
         
     }
     
-    function customerSelected(custormerID) {
-        console.log(custormerID);
-        var ordersForCustomer = searchOrders(custormerID);
+    function customerSelected(customerID) {
+        alert(customerID);
+        //console.log(customerID);
+        var ordersForCustomer = searchOrders(customerID);
         for(let i=0; i < ordersForCustomer.length; i++) {
             const $orderDiv = document.createElement('div');
-            $orderDiv.innerHTML = customer.CustomerID + " ";
+            $orderDiv.innerHTML = ordersForCustomer[i].CustomerID + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].EmployeeID + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].OrderDate + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].RequiredDate + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShippedDate + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipVia + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].Freight + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipName + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipAddress + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipCity + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipRegion + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipPostalCode + " ";
+            $orderDiv.innerHTML += ordersForCustomer[i].ShipCountry;
+
             document.getElementById('orders').appendChild($orderDiv);
         }
     }
 
-    function searchOrders(custormerID){
-        var ordersForCustomer = [];
-        for (var i=0; i < ordersArray.length; i++) {
-            if (ordersArray[i].CustomerID === custormerID) {
-                ordersForCustomer.push(ordersArray[i]);
-            }
-        }
+    function searchOrders(customerID){
+        var ordersForCustomer = ordersArray.filter(function (order) {
+            return order.CustomerID === customerID;
+          });
         return ordersForCustomer;
     }
+
 
     function buildOrders(data) {
         const orders = JSON.parse(data);
