@@ -1,32 +1,24 @@
-// javascript filter
-
-
-// $(document).off().on("click",".courses-flex #courses tr",function(e){
-//     courses.courseSelected($(this));
-// });
-
-// function courseSelected(row)  {
-//     var courseID = row.find("#course-id").text();
-//     var courseName = row.find("#course-name").text(); 
-//     var courseDescr= row.find("#course-description").text();
-//     var studentCourse = row.find("#number-of-students-for-course").text();
-//     var studentIDs = row.find("#student-ids").text();
-//     var co = courseObject();
-//     courseHandled.details = new co.Course(  parseInt(courseID), 
-//                                             courseName, 
-//                                             courseDescr, 
-//                                             parseInt(studentCourse), 
-//                                             studentIDs);
-// }
-
 (function() {
     // -------------------- show exist data ------------ //
     var ordersArray = [];
+    var ordersDetailsArray = [];
+    
+    window.custCache = "";
+    var custCache = window.custCache;
+    window.orderCache = "";
+    var orderCache = window.orderCache;
+    window.orderDetailsCache = "";
+    var orderDetailsCache = window.orderDetailsCache;
 
+    
     const customersContainer = document.getElementById('customers');
 
-    //getCustomers().then(buildCustomers);
-    getCustomers().then(buildCustomers).then(getOrders).then(buildOrders);
+    getCustomers().
+    then(buildCustomers).
+    then(getOrders).
+    then(buildOrders).
+    then(getOrderDetails).
+    then(buildOrdersDetails);
     
     function buildCustomers(response) {
         const customers = JSON.parse(response);
@@ -63,27 +55,48 @@
     }
     
     function customerSelected(customerID) {
-        alert(customerID);
-        //console.log(customerID);
+        // alert(customerID);
+        document.getElementById('orders').innerHTML = "";
         var ordersForCustomer = searchOrders(customerID);
         for(let i=0; i < ordersForCustomer.length; i++) {
+            //document.getElementById('orders').appendChild($orderButton);
+            
             const $orderDiv = document.createElement('div');
-            $orderDiv.innerHTML = ordersForCustomer[i].CustomerID + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].EmployeeID + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].OrderDate + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].RequiredDate + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShippedDate + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipVia + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].Freight + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipName + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipAddress + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipCity + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipRegion + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipPostalCode + " ";
-            $orderDiv.innerHTML += ordersForCustomer[i].ShipCountry;
+            const $orderDetailsButton = document.createElement('button');
 
+            $orderDetailsButton.addEventListener('click', function() {
+                orderDetails(ordersForCustomer[i].OrderID)
+            });
+            var $buttonText = document.createTextNode('show order details'); 
+            $orderDetailsButton.appendChild($buttonText); 
+            $orderDetailsButton.className = "btn btn-info"; 
+            $orderDiv.appendChild($orderDetailsButton);
+            let orderContent = ordersForCustomer[i].OrderID + " ";
+            orderContent += ordersForCustomer[i].CustomerID + " ";
+            orderContent += ordersForCustomer[i].EmployeeID + " ";
+            orderContent += ordersForCustomer[i].OrderDate + " ";
+            orderContent += ordersForCustomer[i].RequiredDate + " ";
+            orderContent += ordersForCustomer[i].ShippedDate + " ";
+            orderContent += ordersForCustomer[i].ShipVia + " ";
+            orderContent += ordersForCustomer[i].Freight + " ";
+            orderContent += ordersForCustomer[i].ShipName + " ";
+            orderContent += ordersForCustomer[i].ShipAddress + " ";
+            orderContent += ordersForCustomer[i].ShipCity + " ";
+            orderContent += ordersForCustomer[i].ShipRegion + " ";
+            orderContent += ordersForCustomer[i].ShipPostalCode + " ";
+            orderContent += ordersForCustomer[i].ShipCountry;
+            $orderDiv.appendChild(document.createTextNode(orderContent));
             document.getElementById('orders').appendChild($orderDiv);
         }
+    }
+
+    function orderDetails(orderID) {
+        //alert('orderDetails(orderID): ' + orderID);
+        var orderDetails = ordersDetailsArray.filter(function (orderDetails) {
+            return orderDetails.OrderID === orderID;
+          });
+
+          alert("orderDetails: " + JSON.stringify(orderDetails));
     }
 
     function searchOrders(customerID){
@@ -97,7 +110,8 @@
     function buildOrders(data) {
         const orders = JSON.parse(data);
         for(let i=0; i < orders.length; i++) {
-            let order = new Order(orders[i].CustomerID,
+            let order = new Order(orders[i].OrderID,
+                orders[i].CustomerID,
                 orders[i].EmployeeID,
                 orders[i].OrderDate,
                 orders[i].RequiredDate,
@@ -111,15 +125,21 @@
                 orders[i].ShipPostalCode,
                 orders[i].ShipCountry);
                 ordersArray.push(order);
-            // const $addressDiv = document.createElement('p');
-            // $addressDiv.className = 'drag-item';
-            // $addressDiv.id = 'address' + i;
-            // $addressDiv.draggable = true;
-            // $addressDiv.addEventListener('dragstart', dragstart_handler);
-            // $addressDiv.innerHTML = addresses[i].street + addresses[i].houseNumber + addresses[i].city ;
-            // document.getElementById('addresses').appendChild($addressDiv);
         }
 
+    }
+
+    function buildOrdersDetails(data) {
+        const ordersDetails = JSON.parse(data);
+        for(let i=0; i < ordersDetails.length; i++) {
+            let orderDetails = new OrderDetails(ordersDetails[i].OrderID,
+                ordersDetails[i].ProductID,
+                ordersDetails[i].ProductName,
+                ordersDetails[i].UnitPrice,
+                ordersDetails[i].Quantity,
+                ordersDetails[i].Discount);
+                ordersDetailsArray.push(orderDetails);
+        }
     }
     // -------------------- create new data ------------ //
 }());
@@ -150,7 +170,8 @@ function Customer(  CustomerID,
     
 }
 
-function Order( CustomerID, 
+function Order( OrderID,
+                CustomerID, 
                 EmployeeID,
                 OrderDate,
                 RequiredDate,
@@ -163,6 +184,7 @@ function Order( CustomerID,
                 ShipRegion,
                 ShipPostalCode,
                 ShipCountry) {
+        this.OrderID = OrderID;
         this.CustomerID = CustomerID;
         this.EmployeeID = EmployeeID;
         this.OrderDate = OrderDate;
@@ -178,34 +200,112 @@ function Order( CustomerID,
         this.ShipCountry = ShipCountry;
 }
 
+function OrderDetails(  OrderID,
+                        ProductID,
+                        ProductName, 
+                        UnitPrice,
+                        Quantity,
+                        Discount) {
+    this.OrderID = OrderID;
+    this.ProductID = ProductID;
+    this.ProductName = ProductName;
+    this.UnitPrice = UnitPrice;
+    this.Quantity = Quantity;
+    this.Discount = Discount;
+}
+
+
 //services
 function getCustomers() {
-    var parmSql = "Customers";
-    return fetch('api.php', parmSql);
+    //alert('in getCustomers()');
+    if (!custCache)
+        custCache = [];
+    
+    return new Promise(function(resolve, error) {
+       // alert("custCache.length: " + custCache.length);
+        if (custCache.length > 0) {
+            resolve(custCache);
+            console.log('cache');
+        }
+        else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", 'api.php?op=Customers');
+            xhr.onload = function() {
+                custCache = JSON.parse(this.responseText);
+                resolve(this.responseText);
+            }
+            xhr.send();
+        }
+    });
+
+    // var parmSql = "Customers";
+    // return fetch('api.php', parmSql);
 }
 
 function getOrders() {
-    // ordersCache = window.ordersCache;
-    // if (!ordersCache){
-    //     ordersCache = [];
-    // }
-    var parmSql = "Orders";
-    return fetch('api.php', parmSql);
+    //alert('in getOrders()');
+    if (!orderCache)
+    orderCache = [];
+
+    return new Promise(function(resolve, error) {
+        //alert("orderCache.length: " + orderCache.length);
+        if (orderCache.length > 0) {
+            resolve(orderCache);
+            console.log('cache');
+        }
+        else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", 'api.php?op=Orders');
+            xhr.onload = function() {
+                orderCache = JSON.parse(this.responseText);
+                resolve(this.responseText);
+            }
+            xhr.send();
+        }
+});
+
+    // var parmSql = "Orders";
+    // return fetch('api.php', parmSql);
 }
 
-function fetch(url, parmSql) {
-    return new Promise(function(resolve, reject) {
-          var oReq = new XMLHttpRequest();
-          oReq.addEventListener("load", function() {
-            resolve(this.responseText);
-          });
-          oReq.addEventListener("error", function() {
-            reject(this.responseText);
-          });
-          
-          oReq.open("GET", url +'?op=' + parmSql);
-          oReq.send();
-    });
+function getOrderDetails() {
+    //alert('in getOrderDetails()');
+    if (!orderDetailsCache)
+    orderDetailsCache = [];
+
+    return new Promise(function(resolve, error) {
+        //alert("orderDetailsCache.length: " + orderDetailsCache.length);
+        if (orderDetailsCache.length > 0) {
+            resolve(orderDetailsCache);
+        }
+        else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", 'api.php?op=OrderDetails');
+            xhr.onload = function() {
+                orderDetailsCache = JSON.parse(this.responseText);
+                resolve(this.responseText);
+            }
+            xhr.send();
+        }
+});
+
+    // var parmSql = "Orders";
+    // return fetch('api.php', parmSql);
 }
+
+// function fetch(url, parmSql) {
+//     return new Promise(function(resolve, reject) {
+//           var oReq = new XMLHttpRequest();
+//           oReq.addEventListener("load", function() {
+//             resolve(this.responseText);
+//           });
+//           oReq.addEventListener("error", function() {
+//             reject(this.responseText);
+//           });
+          
+//           oReq.open("GET", url +'?op=' + parmSql);
+//           oReq.send();
+//     });
+// }
 
 

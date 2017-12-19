@@ -15,35 +15,16 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
   </script>
+    <!-- site less file placed after bootstrap files to enable overriding of bootstrap styles --> 
+    <link rel="stylesheet/less" type="text/css" href="style.less" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
 
-  <!-- <style>
-    .customers {
-      width:31%;
-      margin:0 1%;
-      float: left;
-      text-align: center;
-      box-sizing: border-box;
-      border: 1px solid black;
-      min-height: 200px;
-    }
-
-    .drag-item {
-      text-align: center;
-      box-sizing: border-box;
-      border: 1px solid black;
-      cursor: pointer;
-    }
-  </style> -->
 </head>
 
 <body >
  
-  <div>
-    <ul id='customers'></ul>
-  </div>
-  <div id='orders'>
-   
-  </div>
+  <div class="customers_table"><ul id='customers'></ul></div>
+  <div class="orders_table" id='orders'></div>  
   <!-- <script src="templates.js"></script>
   <script src="services.js"></script> -->
   <script src="main.js"></script>
@@ -51,3 +32,4 @@
 </body>
 
 </html>
+

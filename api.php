@@ -2,7 +2,11 @@
     $con = mysqli_connect('localhost','root','','northwind');
 
     $queryCustomers = "SELECT `CustomerID`, `CompanyName`, `ContactName`, `ContactTitle`, `Address`, `City`, `Region`, `PostalCode`, `Country`, `Phone`, `Fax` FROM `customers`";
-    $queryOrderDetails = "SELECT `OrderID`, `ProductID`, `UnitPrice`, `Quantity`, `Discount` FROM `order details`";
+   // $queryOrderDetails = "SELECT `OrderID`, `ProductID`, `UnitPrice`, `Quantity`, `Discount` FROM `order details`";
+    $queryOrderDetails =
+    "SELECT `OrderID`, `products`.ProductID,  `ProductName`, `products`.UnitPrice, `Quantity`, `Discount` 
+     FROM `order details`
+     inner join `products` on `products`.ProductID = `order details`.ProductID";
     $queryOrders = "SELECT `OrderID`, `CustomerID`, `EmployeeID`, `OrderDate`, `RequiredDate`, `ShippedDate`, `ShipVia`, `Freight`, `ShipName`, `ShipAddress`, `ShipCity`, `ShipRegion`, `ShipPostalCode`, `ShipCountry` FROM `orders`";
     $queryProducts = "SELECT `ProductID`, `ProductName`, `SupplierID`, `CategoryID`, `QuantityPerUnit`, `UnitPrice`, `UnitsInStock`, `UnitsOnOrder`, `ReorderLevel`, `Discontinued` FROM `products`";
 

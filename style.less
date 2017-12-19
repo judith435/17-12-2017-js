@@ -1,0 +1,33 @@
+@small-device: ~"only screen and (max-height: 670px)";
+@medium-device: ~"only screen and (min-height: 671px) and (max-height: 850px)";
+@large-device: ~"only screen and (min-height: 851px)";
+
+@regular-table-height--small: 385px;
+@regular-table-height--medium: 450px; 
+@regular-table-height--large: 535px;
+
+@reduced-table-height--small: 220px;
+@reduced-table-height--medium: 350px; 
+@reduced-table-height--large: 450px;
+
+//mixin for all tables displaying data
+.data_display_table {  
+    overflow-y: auto;
+    width: 90%;
+}
+
+//class for divs containing tables displaying data => select & delete
+.customers_table {
+    .data_display_table;
+    @media @small-device { height: @regular-table-height--small; }
+    @media @medium-device { height: @regular-table-height--medium; }
+    @media @large-device { height: @regular-table-height--large; }
+}
+
+//class for divs containing tables displaying data => update (reduced height: to give room for updating of fields  )
+.orders_table {
+    .data_display_table;
+    @media @small-device { height: @reduced-table-height--small; }
+    @media @medium-device { height: @reduced-table-height--medium; }
+    @media @large-device { height: @reduced-table-height--large; }
+}
